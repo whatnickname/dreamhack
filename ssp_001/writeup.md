@@ -2,7 +2,7 @@
 
 > **Category:** Pwnable  
 > **Difficulty:** <span style="color: #CD7F32; font-weight: bold;">B2</span>  
-> **Flag:** `FLAG{example_flag_here}`  
+> **Flag:** `DH{--}`  
 
 ---
 
@@ -24,7 +24,7 @@
 
 이 문제는 **Stack Smashing Protector(Canary)**가 적용되어 있어 단순 BOF로 `RET`를 덮어쓰면 카나리 검증 실패로 프로그램이 터집니다. 따라서 **1) Canary Leak** 후 **2) Buffer Overflow**를 수행해야 합니다.
 
-### 📌 Code Review & Vulnerable Points
+### Code Review & Vulnerable Points
 C 언어 의사 코드(Decompiled Code) 및 핵심 메뉴 기능 분석:
 
 ```c
@@ -87,7 +87,7 @@ int main(int argc, char *argv[]) {
     }
 }
 ```
-## 3. Exploit Scenario (공격 시나리오)
+## 🗡️ 3. Exploit Scenario (공격 시나리오)
 
 1. **`[P]rint the box` 메뉴 사용:**
    * `box` 배열 시작점부터 Stack Canary까지의 오프셋(거리)을 구합니다.
@@ -102,7 +102,7 @@ int main(int argc, char *argv[]) {
 ---
 
 
-## 4. Appendix: GDB Disassembly & Analysis (GDB 분석)
+## 🕵️‍♀️ 4. Appendix: GDB Disassembly & Analysis (GDB 분석)
 
 ### 1. Stack Canary Storage
 함수 시작 부분에서 `%gs:0x14`로부터 Canary 값을 가져와 스택에 저장하는 어셈블리 코드입니다.
@@ -139,7 +139,7 @@ int main(int argc, char *argv[]) {
 
 ---
 
-## 5. Exploit Script (`ex.py`)
+## 💥 5. Exploit Script (`ex.py`)
 
 ```python
 from pwn import *
@@ -176,7 +176,7 @@ p.interactive()
 
 
 
-## 6. Code Analysis & Deep Dive (주요 포인트 분석)
+## 💡 6. Code Analysis & Deep Dive (주요 포인트 분석)
 
 * **Canary Leak (OOB 이용):**
   * `box` 배열 시작점부터 Canary까지의 오프셋이 `128`부터 시작하며, 4바이트(`128`, `129`, `130`, `131` 인덱스)에 걸쳐 존재합니다.
@@ -187,7 +187,7 @@ p.interactive()
 
 ---
 
-## 7. Retrospective / Takeaways (요약 및 느낀 점)
+## 🎓 7. Retrospective / Takeaways (요약 및 느낀 점)
 
 * 32비트 환경에서의 Stack Canary Structure 및 Little-Endian 변환 과정(`p32`/`u32`)을 재점검할 수 있었습니다.
 * pwntools의 `unhex()` 기능을 활용해 16진수 텍스트 데이터를 효율적으로 바이트 데이터로 변환하는 방법을 익혔습니다.
