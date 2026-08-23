@@ -1,7 +1,7 @@
-# 🚩 [ssp_001]
+# 🚩 [Format String Bug]
 
 > **Category:** Pwnable  
-> **Difficulty:** <span style="color: #CD7F32; font-weight: bold;">B2</span>  
+> **Difficulty:** <span style="color: #FFD700; font-weight: bold;">G4</span>  
 > **Flag:** `DH{--}`  
 
 ---
@@ -9,20 +9,19 @@
 ## 📄 1. Challenge Description
 * **Environment :**
   ```text
-    Ubuntu 16.04
-    Arch:     i386-32-little
-    RELRO:    Partial RELRO
-    Stack:    Canary found
-    NX:       NX enabled
-    PIE:      No PIE (0x8048000)
+    Arch:       amd64-64-little
+    RELRO:      Full RELRO
+    Stack:      No canary found
+    NX:         NX enabled
+    PIE:        PIE enabled
 * **Reference :**
   ```text
-    Stack Smashing Protector
+    Format String Bug
 ---
 
 ## 🔍 2. Vulnerability Analysis
 
-이 문제는 **Stack Smashing Protector(Canary)**가 적용되어 있어 단순 BOF로 `RET`를 덮어쓰면 카나리 검증 실패로 프로그램이 터집니다. 따라서 **1) Canary Leak** 후 **2) Buffer Overflow**를 수행해야 합니다.
+이 문제는 **Position-Independent Executable(PIE)**가 적용되어 있어 코드영역의 주소가 계속 바뀜니다. 따라서 **1) Offset**을 구한후 **2) changeme**함수의 주소를 계산해야 합니다.
 
 ### Code Review & Vulnerable Points
 C 언어 의사 코드(Decompiled Code) 및 핵심 메뉴 기능 분석:
