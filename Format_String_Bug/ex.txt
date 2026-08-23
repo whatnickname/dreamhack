@@ -1,0 +1,5 @@
+buf : 0x30 -> 48
+changeme : 0x401c
+
+
+offset 0x1293
