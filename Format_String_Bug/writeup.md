@@ -27,70 +27,47 @@
 C 언어 의사 코드(Decompiled Code) 및 핵심 메뉴 기능 분석:
 
 ```c
+// Name: fsb_overwrite.c
+// Compile: gcc -o fsb_overwrite fsb_overwrite.c
+
 #include <stdio.h>
 #include <stdlib.h>
-#include <signal.h>
 #include <unistd.h>
-void alarm_handler() {
-    puts("TIME OUT");
-    exit(-1);
+
+void get_string(char *buf, size_t size) {
+  ssize_t i = read(0, buf, size);
+  if (i == -1) {
+    perror("read");
+    exit(1);
+  }
+  if (i < size) {
+    if (i > 0 && buf[i - 1] == '\n') i--;
+    buf[i] = 0;
+  }
 }
-void initialize() {
-    setvbuf(stdin, NULL, _IONBF, 0);
-    setvbuf(stdout, NULL, _IONBF, 0);
-    signal(SIGALRM, alarm_handler);
-    alarm(30);
-}
-// ret에 덮어야 할 주소
-void get_shell() {
-    system("/bin/sh");
-}
-// OOB(Out of Bounds)로 canary leak 가능
-void print_box(unsigned char *box, int idx) {
-    printf("Element of index %d is : %02x\n", idx, box[idx]);
-}
-void menu() {
-    puts("[F]ill the box");
-    puts("[P]rint the box");
-    puts("[E]xit");
-    printf("> ");
-}
-int main(int argc, char *argv[]) {
-    unsigned char box[0x40] = {};
-    char name[0x40] = {};
-    char select[2] = {};
-    int idx = 0, name_len = 0;
-    initialize();
-    while(1) {
-        menu();
-        read(0, select, 2);
-        switch( select[0] ) {
-            case 'F':
-                printf("box input : ");
-                read(0, box, sizeof(box));
-                break;
-            case 'P':
-                printf("Element index : ");
-                scanf("%d", &idx);
-                print_box(box, idx);
-                break;
-            case 'E':
-                printf("Name Size : ");
-                scanf("%d", &name_len);
-                printf("Name : ");
-                read(0, name, name_len);  //BOF 가능
-                return 0;
-            default:
-                break;
-        }
+
+int changeme;
+
+int main() {
+  char buf[0x20];
+  
+  setbuf(stdout, NULL);
+  
+  while (1) {
+    get_string(buf, 0x20);
+    printf(buf);                     // Format String Bug 가능
+    puts("");
+    if (changeme == 1337) {          //changeme를 1337로 바꾸면 성공
+      system("/bin/sh");
     }
+  }
 }
 ```
 ## 🗡️ 3. Exploit Scenario (공격 시나리오)
 
-1. **`[P]rint the box` 메뉴 사용:**
-   * `box` 배열 시작점부터 Stack Canary까지의 오프셋(거리)을 구합니다.
-   * OOB를 이용해 Canary 값을 바이트 단위로 읽어옵니다.
+1. **`Format String Bug 사용:**
+   * buf를 0x20만큼 입력을 할 수 있습니다.
+   * FSB를 통해 changeme 주소와 changeme의 값을 변경 가능합니다.
 
 2. **`[E]xit` 메뉴 사용:**
    * `name_len`에 충분히 큰 값(예: 128)을 입력합니다.
