@@ -57,7 +57,7 @@ int main() {
     get_string(buf, 0x20);
     printf(buf);                     // Format String Bug 가능
     puts("");
-    if (changeme == 1337) {          //changeme를 1337로 바꾸면 성공
+    if (changeme == 1337) {          // changeme를 1337로 바꾸면 성공
       system("/bin/sh");
     }
   }
@@ -65,12 +65,12 @@ int main() {
 ```
 ## 🗡️ 3. Exploit Scenario (공격 시나리오)
 
-1. **`Format String Bug 사용:**
+1. **Format String Bug 사용:**
    * buf를 0x20만큼 입력을 할 수 있습니다.
    * FSB를 통해 changeme 주소와 changeme의 값을 변경 가능합니다.
 
-2. **`[E]xit` 메뉴 사용:**
-   * `name_len`에 충분히 큰 값(예: 128)을 입력합니다.
+2. ** Base Address 구하기:**
+   * `bug`에 `%15$p`를 입력하여 합니다.
    * `Payload = Dummy + Canary + Dummy + get_shell()` 형태로 페이로드를 구성하여 전송합니다.
 
 3. **Shell 획득 및 Flag 획득**
