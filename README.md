@@ -17,7 +17,7 @@
 | :--- | :---: | :--- | :---: |
 | ssp_001 | B2 | Canary Leak, BOF | [Link](./ssp_001/writeup.md) |
 | Format String Bug | G4| Format String Bug, PIE | [Link](./Format_String_Bug/writeup.md) |
-| Return to Library | B1 | Canary Leak, RTL | [Link](./rtl/writeup.md) |
+| Return to Library | B1 | Canary Leak, RTL | [Link](./RTL/writeup.md) |
 
 ### 🔐 Reversing
 | 문제 이름 | 난이도 | 주요 개념 / 기법 | Write-up |
