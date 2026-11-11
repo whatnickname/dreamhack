@@ -129,6 +129,9 @@ p.interactive()
 * **Payload Structure:**
   * `Dummy` + `Canary` + `Dummy` + `pop_rsi` + `/bin/sh` + `ret` + `system`
   * 가젯을 이용하여 NX기법을 성공적으로 우회하였습니다.
+* **gadget 찾는법:**
+  * `ROPgadget --binary ./바이너리이름` 으로 전체 가젯들을 볼 수 있다.
+  * `ROPgadget --binary ./바이너리이름 | grep "pop rdi"`으로 특정 가젯도 할 수 있다.
 
 ---
 
